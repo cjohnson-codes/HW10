@@ -1,0 +1,58 @@
+import ast
+
+def read_path(filename):
+    with open(filename, "r") as file:
+        rows, cols = map(int, file.readline().split())
+
+        path = []
+        for line in file:
+            row, col = map(int, line.strip().split(","))
+            path.append((row, col))
+
+    return rows, cols, path
+
+
+def encipher(message, rows, cols, path):
+    grid = [[" " for _ in range(cols)] for _ in range(rows)]
+
+    for i, (r, c) in enumerate(path):
+        if i < len(message):
+            grid[r][c] = message[i]
+
+    cipher = ""
+
+    for row in grid:
+        for char in row:
+            cipher += char
+
+    return cipher
+
+
+def decipher(cipher, rows, cols, path):
+    grid = []
+    index = 0
+
+    for r in range(rows):
+        row = []
+        for c in range(cols):
+            row.append(cipher[index])
+            index += 1
+        grid.append(row)
+
+    message = ""
+
+    for r, c in path:
+        message += grid[r][c]
+
+    return message.strip()
+
+
+rows, cols, path = read_path("path.txt")
+
+message = input("Message: ")
+
+ciphertext = encipher(message, rows, cols, path)
+print("Ciphertext:", ciphertext)
+
+plaintext = decipher(ciphertext, rows, cols, path)
+print("Deciphered:", plaintext)
